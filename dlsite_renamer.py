@@ -14,7 +14,6 @@ template = 'workno [circle] title (cv)'  # 默认命名模板
 replace_rules = []  # 替换规则
 
 RJ_WEBPATH = 'https://www.dlsite.com/maniax/work/=/product_id/'
-RT_WEBPATH = 'https://www.dlsite.com.tw/work/product_id/'
 R_COOKIE = {'adultchecked': '1'}
 
 # re.compile()返回一个匹配对象
@@ -98,9 +97,6 @@ def match_rj(rj_code):
         text.insert(tk.END, "**请求超时!\n")
         text.insert(tk.END, "  请检查网络连接\n")
         return "", "", "", []
-
-
-def match_rt(rt_code):
     url = RT_WEBPATH + rt_code
     try:
         r = s.get(url + '.html', allow_redirects=False, cookies=R_COOKIE)
@@ -117,7 +113,6 @@ def match_rt(rt_code):
         text.insert(tk.END, "**请求超时!\n")
         text.insert(tk.END, "  请检查网络连接\n")
         return "", "", "", []
-
 
 def nameChange():
     # askdirectory()文件对话框, 选择目录, 返回目录名
@@ -150,8 +145,6 @@ def nameChange():
                     text.insert(tk.END, 'Processing: ' + r_code + '\n')
                     if r_code[1] == "J":
                         r_status, title, circle, cvList = match_rj(r_code)
-                    elif r_code[1] == "T":
-                        r_status, title, circle, cvList = match_rt(r_code)
                     # 如果顺利爬取网页信息
                     if r_status == 200 and title and circle:
                         if var1.get():
