@@ -1,4 +1,25 @@
 {
-    "replace_rules": [],
-    "template": "workno [circle] [title] [cv] "
-}
+	 "replace_rules":
+	 [
+		{
+            "type": "rj",
+			"from": "",
+			"to": "workno title (CV. cv) "
+		},
+		{
+            "type": "bj",
+			"from": "",
+			"to": "[workno][circle (author)] title "
+		},
+		{
+            "type": "vj",
+			"from": "",
+			"to": "[workno][circle] title "
+		},
+		{
+            "type": "default",
+			"from": "",
+			"to": "workno title "
+		}
+	]
+} 
