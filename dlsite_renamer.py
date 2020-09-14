@@ -18,8 +18,11 @@ template_VJ = 'workno [title] '  # 默認VJ命名模板(Game)
 replace_rules = []  # 替換規則
 
 RJ_WEBPATH = 'https://www.dlsite.com/maniax/work/=/product_id/'
+RJ_G_WEBPATH = 'https://www.dlsite.com/home/work/=/product_id/'
 BJ_WEBPATH = 'https://www.dlsite.com/books/work/=/product_id/'
+BJ_G_WEBPATH = 'https://www.dlsite.com/comic/work/=/product_id/'
 VJ_WEBPATH = 'https://www.dlsite.com/pro/work/=/product_id/'
+VJ_G_WEBPATH = 'https://www.dlsite.com/soft/work/=/product_id/'
 R_COOKIE = {'adultchecked': '1'}
 
 # re.compile()返回一個匹配對像
@@ -92,7 +95,21 @@ def match_code(work_code):
         # HTTP狀態碼==200表示請求成功
         if r.status_code != 200:
             #print("    Status code:", r.status_code, "\nurl:", url)
-            return r.status_code, "", "", []
+            try:
+                ## 改成一般向網址
+                if work_code[0] == "R" or work_code[0] == "r":
+                    url = RJ_G_WEBPATH + work_code
+                if work_code[0] == "B" or work_code[0] == "b":
+                    url = BJ_G_WEBPATH + work_code
+                if work_code[0] == "V" or work_code[0] == "v":
+                    url = VJ_G_WEBPATH + work_code
+                r = s.get(url, allow_redirects=False, cookies=R_COOKIE)
+                if r.status_code != 200:
+                    return r.status_code, "", "", []
+            except os.error as err:
+                text.insert(tk.END, "**請求超時!\n")
+                text.insert(tk.END, "  請檢查網絡連接\n")
+                return "", "", "", []
 
         # fromstring()在解析xml格式時, 將字串轉換為Element對像, 解析樹的根節點
         # 在python中, 對get請求返回的r.content做fromstring()處理, 可以方便進行後續的xpath()定位等
