@@ -9,20 +9,20 @@ import re
 import os
 import json
 
-# 默认配置
-template = 'workno title '  # 默认命名模板
-template_RJ = 'workno title (cv) '  # 默认RJ命名模板(Voice)
-template_BJ = 'workno [circle (author)] [title] '  # 默认BJ命名模板(Comic)
-template_VJ = 'workno [title] '  # 默认VJ命名模板(Game)
+# 默認設定
+template = 'workno title '  # 默認命名模板
+template_RJ = 'workno title (cv) '  # 默認RJ命名模板(Voice)
+template_BJ = 'workno [circle (author)] [title] '  # 默認BJ命名模板(Comic)
+template_VJ = 'workno [title] '  # 默認VJ命名模板(Game)
 
-replace_rules = []  # 替换规则
+replace_rules = []  # 替換規則
 
 RJ_WEBPATH = 'https://www.dlsite.com/maniax/work/=/product_id/'
 BJ_WEBPATH = 'https://www.dlsite.com/books/work/=/product_id/'
 VJ_WEBPATH = 'https://www.dlsite.com/pro/work/=/product_id/'
 R_COOKIE = {'adultchecked': '1'}
 
-# re.compile()返回一个匹配对象
+# re.compile()返回一個匹配對像
 # ensure path name is exactly RJ###### or RT######
 pattern = re.compile("[BRV][EJ]\d{6}")
 # filter to substitute illegal filenanme characters to " "
@@ -30,12 +30,12 @@ filter = re.compile('[\\\/:"*?<>|]+')
 
 
 # 避免ERROR: Max retries exceeded with url
-requests.adapters.DEFAULT_RETRIES = 5  # 增加重连次数
+requests.adapters.DEFAULT_RETRIES = 5  # 增加重連次數
 s = requests.session()
-s.keep_alive = False  # 关闭多余连接
-# s.get(url) # 你需要的网址
+s.keep_alive = False  # 關閉多餘連接
+# s.get(url) # 你需要的網址
 
-# 查找母串内所有子串的位置, 查找失败返回-1
+# 查找母串內所有子串的位置, 查找失敗返回-1
 
 
 def find_all(source, dest):
@@ -62,7 +62,7 @@ def find_all(source, dest):
         dest_list.remove(x)
     return dest_list
 
-# 从文件夹名称中提取code
+# 從資料夾名稱中提取code
 
 
 def get_code(originalName, matchCode):
@@ -79,7 +79,7 @@ def get_code(originalName, matchCode):
 
 
 def match_code(work_code):
-    # requests库是一个常用于http请求的模块
+    # requests函示庫是一個常用於http請求的模組
     if work_code[0] == "R" or work_code[0] == "r":
         url = RJ_WEBPATH + work_code
     if work_code[0] == "B" or work_code[0] == "b":
@@ -89,13 +89,13 @@ def match_code(work_code):
     try:
         # allow_redirects=False 禁止重定向
         r = s.get(url, allow_redirects=False, cookies=R_COOKIE)
-        # HTTP状态码==200表示请求成功
+        # HTTP狀態碼==200表示請求成功
         if r.status_code != 200:
             #print("    Status code:", r.status_code, "\nurl:", url)
             return r.status_code, "", "", []
 
-        # fromstring()在解析xml格式时, 将字符串转换为Element对象, 解析树的根节点
-        # 在python中, 对get请求返回的r.content做fromstring()处理, 可以方便进行后续的xpath()定位等
+        # fromstring()在解析xml格式時, 將字串轉換為Element對像, 解析樹的根節點
+        # 在python中, 對get請求返回的r.content做fromstring()處理, 可以方便進行後續的xpath()定位等
         tree = html.fromstring(r.content)
         title = tree.xpath('//a[@itemprop="url"]/text()')[0]
         circle = tree.xpath(
@@ -108,44 +108,44 @@ def match_code(work_code):
         return 200, title, circle, cvList, authorList
 
     except os.error as err:
-        text.insert(tk.END, "**请求超时!\n")
-        text.insert(tk.END, "  请检查网络连接\n")
+        text.insert(tk.END, "**請求超時!\n")
+        text.insert(tk.END, "  請檢查網絡連接\n")
         return "", "", "", []
 
 def nameChange():
-    # askdirectory()文件对话框, 选择目录, 返回目录名
+    # askdirectory()檔案對話框, 選擇目錄, 返回目錄名
     path = filedialog.askdirectory()
     if path == "":
-        messagebox.showinfo(title="错误", message="请选择路径!" + "\n")
+        messagebox.showinfo(title="錯誤", message="請選擇路徑!" + "\n")
     else:
         cbtn.config(state=tk.DISABLED)
         btn.config(state=tk.DISABLED)
         btn['text'] = "等待完成"
-        text.insert(tk.END, "选择路径: " + path + "\n")
-        # os.listdir()返回指定的文件夹包含的文件或文件夹的名字的列表
+        text.insert(tk.END, "選擇路徑: " + path + "\n")
+        # os.listdir()返回指定的資料夾包含的檔案或資料夾的名字的列表
         files = os.listdir(path)
         for file in files:
-            # os.path.isdir()用于判断对象是否为一个目录。
+            # os.path.isdir()用於判斷對象是否為一個目錄。
             if os.path.isdir(os.path.join(path, file)):
-                # 获取文件夹原始名称
+                # 獲取資料夾原始名稱
                 originalName = file
-                # 尝试获取code
+                # 嘗試獲取code
                 code = ""
                 for matchCode in ['RJ', 'rj', 'BJ', 'bj', 'VJ', 'vj']:
                     code = get_code(originalName, matchCode)
                     if code:
                         break
-                # 如果没能提取到code
+                # 如果沒能提取到code
                 if code == "":
-                    continue  # 跳过该文件夹
+                    continue  # 跳過該資料夾
                 else:
                     #print('Processing: ' + code)
                     text.insert(tk.END, 'Processing: ' + code + '\n')
                     r_status, title, circle, cvList, authorList = match_code(code)
-                    # 如果顺利爬取网页信息
+                    # 如果順利爬取網頁訊息
                     if r_status == 200 and title and circle:
                         if var1.get():
-                            # 删除title中的【.*?】
+                            # 刪除title中的【.*?】
                             title = re.sub(u"\\【.*?】", "", title)
 
                         if code[0] == "R" or code[0] == "r":
@@ -174,27 +174,27 @@ def nameChange():
                         else:
                             new_name = new_name.replace("(cv)", "")
 
-                        # 将Windows文件名中的非法字符替换
+                        # 將Windows文件名中的非法字元替換
                         # re.sub(pattern, repl, string)
                         new_name = re.sub(filter, " ", new_name)
-                        # 尝试重命名
+                        # 嘗試重命名
                         try:
-                            # strip() 去掉字符串两边的空格
+                            # strip() 去掉字串兩邊的空格
                             os.rename(os.path.join(path, originalName),
                                       os.path.join(path, new_name.strip()))
                         except os.error as err:
-                            text.insert(tk.END, "**重命名失败!\n")
+                            text.insert(tk.END, "**重命名失敗!\n")
                             text.insert(
                                 tk.END, "  " + os.path.join(path, originalName) + "\n")
-                            text.insert(tk.END, "  请检查是否存在重复的名称\n")
+                            text.insert(tk.END, "  請檢查是否存在重複的名稱\n")
                     elif r_status == 404:
-                        text.insert(tk.END, "**爬取DLsite过程中出现错误!\n")
-                        text.insert(tk.END, "  请检查本作是否已经下架或被收入合集\n")
+                        text.insert(tk.END, "**爬取DLsite過程中出現錯誤!\n")
+                        text.insert(tk.END, "  請檢查本作是否已經下架或被收入合集\n")
                     elif r_status != "":
-                        text.insert(tk.END, "**爬取DLsite过程中出现错误!\n")
-                        text.insert(tk.END, "  网页 URL: " +
+                        text.insert(tk.END, "**爬取DLsite過程中出現錯誤!\n")
+                        text.insert(tk.END, "  網頁 URL: " +
                                     RJ_WEBPATH + code + "\n")
-                        text.insert(tk.END, "  HTTP 响应代码: " +
+                        text.insert(tk.END, "  HTTP 狀態碼: " +
                                     str(r_status) + "\n")
 
                     # set delay to avoid being blocked from server
@@ -205,30 +205,30 @@ def nameChange():
 
         cbtn.config(state=tk.NORMAL)
         btn.config(state=tk.NORMAL)
-        btn['text'] = "选择路径"
+        btn['text'] = "選擇路徑"
 
 
 def thread_it(func, *args):
-    '''将函数打包进线程'''
-    # 创建
+    '''將函數打包進線程'''
+    # 建立
     t = threading.Thread(target=func, args=args)
-    # 守护 !!!
+    # 守護 !!!
     t.setDaemon(True)
-    # 启动
+    # 啟動
     t.start()
     # 阻塞--卡死界面！
     # t.join()
 
 
-root = tk.Tk()  # 实例化object，建立窗口root
-root.title('DLsite重命名工具 v1.0')  # 给窗口的可视化起名字
-root.geometry('300x375')  # 设定窗口的大小(横向 * 纵向)
+root = tk.Tk()  # 實例化object，建立視窗root
+root.title('DLsite重命名工具 v2.0')  # 給視窗的標題取名字
+root.geometry('300x375')  # 設定視窗的大小(橫向 * 縱向)
 
 text = tk.Text(root)
 text.pack()
 
-# 读取配置文件
-# os.path.dirname(__file__) 当前脚本所在路径
+# 讀取配置文件
+# os.path.dirname(__file__) 當前腳本所在路徑
 basedir = os.path.abspath(os.path.dirname(__file__))
 try:
     fname = os.path.join(basedir, 'config.json')
@@ -237,23 +237,23 @@ try:
         for tag in config['replace_rules']:  # 模板非空
             if ("workno" in tag['to']):
                 if tag['type'] == "rj":
-                    text.insert(tk.END, "**使用自定义RJ命名模板:\n")
+                    text.insert(tk.END, "**使用自定義RJ命名模板:\n")
                     template_RJ = tag['to']
                     text.insert(tk.END, "  " + template_RJ.strip() + "\n\n")
                 if tag['type'] == "bj":
-                    text.insert(tk.END, "**使用自定义BJ命名模板:\n")
+                    text.insert(tk.END, "**使用自定義BJ命名模板:\n")
                     template_BJ = tag['to']
                     text.insert(tk.END, "  " + template_BJ.strip() + "\n\n")
                 if tag['type'] == "vj":
-                    text.insert(tk.END, "**使用自定义VJ命名模板:\n")
+                    text.insert(tk.END, "**使用自定義VJ命名模板:\n")
                     template_VJ = tag['to']
                     text.insert(tk.END, "  " + template_VJ.strip() + "\n\n")
             else:
-                text.insert(tk.END, "**模板格式错误: 模板中必须包含\"workno\"!\n")
-                text.insert(tk.END, "  使用默认命名模板:\n")
+                text.insert(tk.END, "**模板格式錯誤: 模板中必須包含\"workno\"!\n")
+                text.insert(tk.END, "  使用默認命名模板:\n")
                 text.insert(tk.END, "  workno title \n\n")
         else:
-            text.insert(tk.END, "**使用默认命名模板:\n")
+            text.insert(tk.END, "**使用默認命名模板:\n")
             text.insert(tk.END, "  workno title \n\n")
 
         if config["replace_rules"] and type(config["replace_rules"]) == list and len(config["replace_rules"]):
@@ -264,14 +264,14 @@ except os.error as err:
     with open(fname, "w", encoding='utf-8') as f:
         json.dump({'template': '', "replace_rules": []}, f, ensure_ascii=False, sort_keys=True,
                   indent=4, separators=(',', ': '))
-    text.insert(tk.END, "**使用默认命名模板:\n")
+    text.insert(tk.END, "**使用默認命名模板:\n")
     text.insert(tk.END, "  workno [circle] \n")
 
-var1 = tk.IntVar()  # 定义var1整型变量用来存放选择行为返回值
-cbtn = tk.Checkbutton(root, text='去除title中【】之间的内容', variable=var1,
-                      onvalue=1, offvalue=0)  # 传值原理类似于radiobutton部件
+var1 = tk.IntVar()  # 定義var1整型變數用來存放選擇行為返回值
+cbtn = tk.Checkbutton(root, text='去除title中【】之間的內容', variable=var1,
+                      onvalue=1, offvalue=0)  # 傳值原理類似於radiobutton物件
 
-btn = tk.Button(root, text='选择路径', command=lambda: thread_it(nameChange))
+btn = tk.Button(root, text='選擇路徑', command=lambda: thread_it(nameChange))
 
 btn.pack()
 cbtn.pack()
