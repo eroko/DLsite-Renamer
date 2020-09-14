@@ -2,6 +2,12 @@
 
 ### 使用說明:
 
+**Install requirements：**
+```
+pip install tkintertable
+pip install requests
+```
+
 **關鍵字**："workno", "circle", "title", "cv", "author", 模板中的這五個關鍵字將會被程式替換  
 
 *分別代表:*
