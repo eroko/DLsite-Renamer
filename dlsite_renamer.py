@@ -222,6 +222,7 @@ def thread_it(func, *args):
 
 root = tk.Tk()  # 實例化object，建立視窗root
 root.title('DLsite重命名工具 v2.0')  # 給視窗的標題取名字
+root.eval('tk::PlaceWindow . center')
 root.geometry('300x375')  # 設定視窗的大小(橫向 * 縱向)
 
 text = tk.Text(root)
