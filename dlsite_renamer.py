@@ -185,10 +185,9 @@ def nameChange():
         # os.listdir()返回指定的資料夾包含的檔案或資料夾的名字的列表
         files = os.listdir(path)
         for file in files:
-            # os.path.isdir()用於判斷對象是否為一個目錄。
-            if os.path.isdir(os.path.join(path, file)):
                 # 獲取資料夾原始名稱
-                originalName = file.upper()
+                filename, file_extension = os.path.splitext(file)
+                originalName = filename.upper()
                 # 嘗試獲取code
                 code = ""
                 for matchCode in ['RJ', 'BJ', 'VJ', 'RE']:
@@ -240,12 +239,16 @@ def nameChange():
                         # 嘗試重命名
                         try:
                             # strip() 去掉字串兩邊的空格
-                            os.rename(os.path.join(path, originalName),
-                                      os.path.join(path, new_name.strip()))
+                            if file_extension:  # 如果是檔案
+                                os.rename(os.path.join(path, file),
+                                        os.path.join(path, new_name.strip()+file_extension))
+                            else:  # 如果是資料夾
+                                os.rename(os.path.join(path, file),
+                                        os.path.join(path, new_name.strip()))
                         except os.error as err:
                             text.insert(tk.END, "**重命名失敗!\n")
                             text.insert(
-                                tk.END, "  " + os.path.join(path, originalName) + "\n")
+                                tk.END, "  " + os.path.join(path, file) + "\n")
                             text.insert(tk.END, "  請檢查是否存在重複的名稱\n")
                     elif r_status == 404:
                         text.insert(tk.END, "**爬取DLsite過程中出現錯誤!\n")
