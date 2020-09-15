@@ -164,8 +164,17 @@ def match_code(work_code):
             '//*[@id="work_outline"]/tr/th[contains(text(), "声優")]/../td/a/text()')
         authorList = tree.xpath(
             '//*[@id="work_maker"]/tr/th[contains(text(), "著者")]/../td/a/text()')
+        work_age = tree.xpath(
+            '//span[@class="icon_ADL"]/text()')
+        if not work_age:
+            work_age = tree.xpath(
+                '//span[@class="icon_GEN"]/text()')
+        release_date = tree.xpath(
+            '//*[@id="work_outline"]/tr/th[contains(text(), "販売日")]/../td/a/text()')[0]
+        # 精簡日期: 20ab年cd月ef日 => abcdef
+        release_date = release_date[2]+release_date[3]+release_date[5]+release_date[6]+release_date[8]+release_date[9]
 
-        return 200, title, circle, cvList, authorList
+        return 200, title, circle, cvList, authorList, work_age[0], release_date
 
     except os.error as err:
         text.insert(tk.END, "**請求超時!\n")
@@ -200,7 +209,7 @@ def nameChange():
                 else:
                     #print('Processing: ' + code)
                     text.insert(tk.END, 'Processing: ' + code + '\n')
-                    r_status, title, circle, cvList, authorList = match_code(code)
+                    r_status, title, circle, cvList, authorList, work_age, release_date = match_code(code)
                     # 如果順利爬取網頁訊息
                     if r_status == 200 and title and circle:
                         if var1.get():
@@ -216,11 +225,13 @@ def nameChange():
 
                         new_name = new_name.replace("title", title)
                         new_name = new_name.replace("circle", circle)
+                        new_name = new_name.replace("work_age", work_age)
+                        new_name = new_name.replace("release_date", release_date)
 
                         author = ""
                         if authorList:  # 如果authorList非空
                             for name in authorList:
-                                author += " " + name
+                                author += "," + name
                             new_name = new_name.replace("author", author[1:])
                         else:
                             new_name = new_name.replace("(author)", "")  

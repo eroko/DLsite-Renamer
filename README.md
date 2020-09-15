@@ -4,11 +4,12 @@
 
 **Install requirements：**
 ```
+pip install lxml
 pip install tkintertable
 pip install requests
 ```
 
-**關鍵字**："workno", "circle", "title", "cv", "author", 模板中的這五個關鍵字將會被程式替換  
+**關鍵字**："workno", "circle", "title", "cv", "author", "work_age", "release_date", 模板中的這七個關鍵字將會被程式替換  
 
 *分別代表:*
 1. workno: 作品編號
@@ -16,23 +17,26 @@ pip install requests
 3. title: 標題
 4. cv: 聲優
 5. author: 作者
+6. work_age: 年齡指定
+7. release_date: 發售日
 
 **默認模板**: "to": "workno title "
 
-**自定義模板**: 請修改 "config.json" 中的 "template"
-
-例如："to": "[workno][circle] title "
-
-重命名前：[不必要的前綴] VJ009178 零.軌跡 (要刪掉的後綴)
-
-重命名後：[VJ009178][Falcom] 英雄伝説 零の軌跡
-
-**自定義替換規則**: 請修改 "config.json" 中的 "replace_rules", 作品編號意義如下     
+**自定義模板**: 請修改 "config.json" 中對應"type"的替換規則 "to", 作品編號意義如下     
 
 RJ開頭 => 音聲/音樂 作品    
 BJ開頭 => 書 作品  
 VJ開頭 => 遊戲 作品     
 
+例如：     
+"type": "vj"        
+"to": "[workno][circle] title "     
+
+重命名前：[不必要的前綴] VJ009178 零.軌跡 (要刪掉的後綴)
+
+重命名後：[VJ009178][Falcom] 英雄伝説 零の軌跡
+
+*config.json範例*
 ```json
 {
 	 "replace_rules":
