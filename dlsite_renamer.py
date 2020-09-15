@@ -189,7 +189,7 @@ def nameChange():
                                 cv += "," + name
                             new_name = new_name.replace("cv", cv[1:])
                         else:
-                            new_name = new_name.replace("(cv)", "")
+                            new_name = new_name.replace("(CV. cv)", "")
 
                         # 將Windows文件名中的非法字元替換
                         # re.sub(pattern, repl, string)
