@@ -196,7 +196,7 @@ def nameChange():
         for file in files:
                 # 獲取資料夾原始名稱
                 filename, file_extension = os.path.splitext(file)
-                originalName = filename.upper()
+                originalName = file.upper()
                 # 嘗試獲取code
                 code = ""
                 for matchCode in ['RJ', 'BJ', 'VJ', 'RE']:
