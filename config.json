@@ -15,11 +15,6 @@
             "type": "vj",
 			"from": "",
 			"to": "[workno][circle] title "
-		},
-		{
-            "type": "default",
-			"from": "",
-			"to": "workno title "
 		}
 	]
 } 

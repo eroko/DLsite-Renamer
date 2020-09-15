@@ -10,10 +10,9 @@ import os
 import json
 
 # 默認設定
-template = 'workno title '  # 默認命名模板
-template_RJ = 'workno title (cv) '  # 默認RJ命名模板(Voice)
-template_BJ = 'workno [circle (author)] [title] '  # 默認BJ命名模板(Comic)
-template_VJ = 'workno [title] '  # 默認VJ命名模板(Game)
+template_RJ = 'workno title '  # 默認RJ命名模板(Voice)
+template_BJ = 'workno title '  # 默認BJ命名模板(Comic)
+template_VJ = 'workno title '  # 默認VJ命名模板(Game)
 
 replace_rules = []  # 替換規則
 
@@ -270,20 +269,36 @@ try:
                 text.insert(tk.END, "**模板格式錯誤: 模板中必須包含\"workno\"!\n")
                 text.insert(tk.END, "  使用默認命名模板:\n")
                 text.insert(tk.END, "  workno title \n\n")
-        else:
-            text.insert(tk.END, "**使用默認命名模板:\n")
-            text.insert(tk.END, "  workno title \n\n")
 
         if config["replace_rules"] and type(config["replace_rules"]) == list and len(config["replace_rules"]):
             replace_rules = config["replace_rules"]
 
 except os.error as err:
     # 生成配置文件
+    json_data = {
+        "replace_rules":
+        [
+            {
+                "type": "rj",
+                "from": "",
+                "to": "workno title "
+            },
+            {
+                "type": "bj",
+                "from": "",
+                "to": "workno title "
+            },
+            {
+                "type": "vj",
+                "from": "",
+                "to": "workno title "
+            }
+        ]
+    }
     with open(fname, "w", encoding='utf-8') as f:
-        json.dump({'template': '', "replace_rules": []}, f, ensure_ascii=False, sort_keys=True,
-                  indent=4, separators=(',', ': '))
-    text.insert(tk.END, "**使用默認命名模板:\n")
-    text.insert(tk.END, "  workno [circle] \n")
+        json.dump(json_data, f, ensure_ascii=False, sort_keys=False,indent=4)
+        text.insert(tk.END, "**使用默認命名模板:\n")
+        text.insert(tk.END, "  workno title \n")
 
 var1 = tk.IntVar()  # 定義var1整型變數用來存放選擇行為返回值
 cbtn = tk.Checkbutton(root, text='去除title中【】之間的內容', variable=var1,

@@ -51,11 +51,6 @@ VJ開頭 => 遊戲 作品
             "type": "vj",
 			"from": "",
 			"to": "[workno][circle] title "
-		},
-		{
-            "type": "default",
-			"from": "",
-			"to": "workno title "
 		}
 	]
 }
