@@ -2,7 +2,7 @@
 ![範例圖片](https://i.imgur.com/8EH3l16.png)
 
 ### How to use:
-1. Download the binary release pack and run .exe or run python script by yourself.
+1. Download the binary [release pack](https://github.com/ch010060/DLsite_Renamer/releases) and run .exe or run python script by yourself.
 2. There are two versions:	
 	1. GUI ver. => dlsite_renamer.py(.exe)
 	2. CLI ver. => dlsite_renamer-cli.py(.exe)
@@ -39,9 +39,11 @@ RJ開頭 => 音聲/音樂 作品
 BJ開頭 => 書 作品  
 VJ開頭 => 遊戲 作品     
 
-例如：     
+例如：
+```
 "type": "vj"        
 "to": "(work_age)[release_date][workno][circle] title "     
+```
 
 重命名前：[不必要的前綴] VJ009178 零.軌跡 (要刪掉的後綴)
 
