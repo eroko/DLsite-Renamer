@@ -55,17 +55,17 @@ VJ開頭 => 遊戲 作品
 	 "replace_rules":
 	 [
 		{
-            "type": "rj",
+            		"type": "rj",
 			"from": "",
 			"to": "workno title (CV. cv) "
 		},
 		{
-            "type": "bj",
+            		"type": "bj",
 			"from": "",
 			"to": "[workno][circle (author)] title "
 		},
 		{
-            "type": "vj",
+            		"type": "vj",
 			"from": "",
 			"to": "[workno][circle] title "
 		}
@@ -75,7 +75,7 @@ VJ開頭 => 遊戲 作品
 
 ### Notice：
 1. config.json 文件使用 **UTF-8** 編碼, 請不要用 Windows 系統自帶的記事本進行編輯，推薦使用專業的**文件編輯器**，例如: [Notepad3](https://www.appinn.com/notepad3/), [Notepad++](https://notepad-plus-plus.org/), [vscode](https://code.visualstudio.com/)
-![Notepad3](https://i.imgur.com/5ouMclD.png)
+![Notepad3](https://i.imgur.com/L73BXEZ.png)
 2. 去除標題中【】之間的內容主要用於去掉不必要的標註，可多加利用~
 
 ### (Optional) CLI version without GUI and loop：
