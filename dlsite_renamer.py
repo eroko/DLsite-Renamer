@@ -27,7 +27,7 @@ R_COOKIE = {'adultchecked': '1'}
 
 # re.compile()返回一個匹配對像
 # ensure path name is exactly RJ###### or RT######
-pattern = re.compile("[BRV][EJ]\d{6}")
+pattern = re.compile("[BbRrVv][EeJj]\d{6}")
 # filter to substitute illegal filenanme characters to " "
 filter = re.compile('[\\\/:"*?<>|]+')
 
@@ -145,10 +145,10 @@ def nameChange():
             # os.path.isdir()用於判斷對象是否為一個目錄。
             if os.path.isdir(os.path.join(path, file)):
                 # 獲取資料夾原始名稱
-                originalName = file
+                originalName = file.upper()
                 # 嘗試獲取code
                 code = ""
-                for matchCode in ['RJ', 'rj', 'BJ', 'bj', 'VJ', 'vj']:
+                for matchCode in ['RJ', 'BJ', 'VJ', 'RE']:
                     code = get_code(originalName, matchCode)
                     if code:
                         break
