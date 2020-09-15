@@ -250,7 +250,7 @@ def nameChange():
                         # 嘗試重命名
                         try:
                             # strip() 去掉字串兩邊的空格
-                            if file_extension:  # 如果是檔案
+                            if os.path.isfile(os.path.join(path, file)):  # 如果是檔案
                                 os.rename(os.path.join(path, file),
                                         os.path.join(path, new_name.strip()+file_extension))
                             else:  # 如果是資料夾
