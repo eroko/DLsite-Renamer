@@ -66,3 +66,15 @@ VJ開頭 => 遊戲 作品
 2. 去除標題中【】之間的內容主要用於去掉不必要的標註，可多加利用~
 
 ![範例圖片](https://i.imgur.com/g9L14QI.png)
+
+### (Optional) CLI version without GUI and loop：
+```
+usage: dlsite_renamer-cli.py [-h] [-d] -i PATH
+
+Renamer for DLsite works
+
+optional arguments:
+  -h, --help            show this help message and exit
+  -d, --DEL             delete string in 【】
+  -i PATH, --PATH PATH  path for processing
+```
