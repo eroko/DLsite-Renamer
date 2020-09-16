@@ -168,7 +168,7 @@ def match_code(work_code):
             '//*[@id="work_outline"]/tr/th[contains(text(), "年齢指定")]/../td/div/a/span/text()')
         if not work_age:
             work_age = tree.xpath(
-                '//span[@class="icon_GEN"]/text()')
+                '//*[@id="work_outline"]/tr/th[contains(text(), "年齢指定")]/../td/div/span/text()')
         release_date = tree.xpath(
             '//*[@id="work_outline"]/tr/th[contains(text(), "販売日")]/../td/a/text()')[0]
         # 精簡日期: 20ab年cd月ef日 => abcdef
