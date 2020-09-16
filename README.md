@@ -19,7 +19,7 @@ pip install tkintertable
 pip install requests
 ```
 
-**Keyword**："workno", "circle", "title", "cv", "author", "work_age", "release_date", 模板中的這七個關鍵字將會被程式替換  
+**Keyword**："workno", "circle", "title", "cv", "author", "work_age", "release_date", "type", 模板中的這8個關鍵字將會被程式替換  
 
 *關鍵字分別代表:*
 1. workno: 作品編號
@@ -29,6 +29,7 @@ pip install requests
 5. author: 作者
 6. work_age: 年齡指定
 7. release_date: 發售日
+8. type: 作品形式
 
 **Default template**: "workno title "
 
@@ -45,12 +46,12 @@ VJ開頭 => 遊戲 作品
 例如：
 ```
 "type": "vj"        
-"to": "(work_age)[release_date][workno][circle] title "     
+"to": "(type)(work_age)[release_date][workno][circle] title "     
 ```
 
 重命名前：[不必要的前綴] VJ009178 零.軌跡 (要刪掉的後綴)
 
-重命名後：(全年齢)[150417][VJ009178][Falcom] 英雄伝説 零の軌跡
+重命名後：(ゲーム)(全年齢)[150417][VJ009178][Falcom] 英雄伝説 零の軌跡
 
 *config.json範例*
 ```json

@@ -151,11 +151,11 @@ def match_code(work_code):
                     url = VJ_G_WEBPATH + work_code
                 r = s.get(url, allow_redirects=False, cookies=R_COOKIE)
                 if r.status_code != 200:
-                    return r.status_code, "", "", "", [], [], "", ""
+                    return r.status_code, "", "", "", [], [], "", "", ""
             except os.error as err:
                 print("**請求超時!\n")
                 print("  請檢查網絡連接\n")
-                return "", "", "", "", [], [], "", ""
+                return "", "", "", "", [], [], "", "", ""
 
         # fromstring()在解析xml格式時, 將字串轉換為Element對像, 解析樹的根節點
         # 在python中, 對get請求返回的r.content做fromstring()處理, 可以方便進行後續的xpath()定位等
@@ -168,6 +168,13 @@ def match_code(work_code):
             '//*[@id="work_outline"]/tr/th[contains(text(), "声優")]/../td/a/text()')
         authorList = tree.xpath(
             '//*[@id="work_maker"]/tr/th[contains(text(), "著者")]/../td/a/text()')
+        type = tree.xpath(
+            '//*[@id="work_outline"]/tr/th[contains(text(), "作品形式")]/../td/div/a/span/text()')[0]
+        # 精簡遊戲類型
+        game_type_list = ["アクション", "クイズ", "アドベンチャー", "ロールプレイング", "テーブル", "デジタルノベル", "シミュレーション", "タイピング", "シューティング", "パズル", "その他ゲーム"]
+        if type in game_type_list:
+            type = "ゲーム"
+            
         work_age = tree.xpath(
             '//*[@id="work_outline"]/tr/th[contains(text(), "年齢指定")]/../td/div/a/span/text()')
         if not work_age:
@@ -179,12 +186,12 @@ def match_code(work_code):
         if len(release_date) >= 11:
             release_date = release_date[2]+release_date[3]+release_date[5]+release_date[6]+release_date[8]+release_date[9]
 
-        return 200, img_url, title, circle, cvList, authorList, work_age[0], release_date
+        return 200, img_url, title, circle, cvList, authorList, work_age[0], release_date, type
             
     except os.error as err:
         print("**請求超時!\n")
         print("  請檢查網絡連接\n")
-        return "", "", "", "", [], [], "", ""
+        return "", "", "", "", [], [], "", "", ""
 
 def nameChange(path, del_flag, cover_flag):
         print("選擇路徑: " + path + "\n")
@@ -206,7 +213,7 @@ def nameChange(path, del_flag, cover_flag):
                 else:
                     #print('Processing: ' + code)
                     print('Processing: ' + code + '\n')
-                    r_status, img_url, title, circle, cvList, authorList, work_age, release_date = match_code(code)
+                    r_status, img_url, title, circle, cvList, authorList, work_age, release_date, type = match_code(code)
                     # 如果順利爬取網頁訊息
                     if r_status == 200 and title and circle:
                         if del_flag:
@@ -224,6 +231,7 @@ def nameChange(path, del_flag, cover_flag):
                         new_name = new_name.replace("circle", circle)
                         new_name = new_name.replace("work_age", work_age)
                         new_name = new_name.replace("release_date", release_date)
+                        new_name = new_name.replace("type", type)
 
                         author = ""
                         if authorList:  # 如果authorList非空
