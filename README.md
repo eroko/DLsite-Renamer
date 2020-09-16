@@ -1,5 +1,5 @@
 # DLsite_Renamer
-![範例圖片](https://i.imgur.com/8EH3l16.png)
+![範例圖片](https://i.imgur.com/BSOwho9.png)
 
 ### Purpose
 Rename the DLsite works and download the cover If required.
