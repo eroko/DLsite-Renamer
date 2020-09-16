@@ -9,6 +9,7 @@ import re
 import os
 import json
 import random
+import urllib.request
 
 # 默認設定
 template_RJ = 'workno title '  # 默認RJ命名模板(Voice)
@@ -148,15 +149,16 @@ def match_code(work_code):
                     url = VJ_G_WEBPATH + work_code
                 r = s.get(url, allow_redirects=False, cookies=R_COOKIE)
                 if r.status_code != 200:
-                    return r.status_code, "", "", [], [], "", ""
+                    return r.status_code, "", "", "", [], [], "", ""
             except os.error as err:
                 text.insert(tk.END, "**請求超時!\n")
                 text.insert(tk.END, "  請檢查網絡連接\n")
-                return "", "", "", [], [], "", ""
+                return "", "", "", "", [], [], "", ""
 
         # fromstring()在解析xml格式時, 將字串轉換為Element對像, 解析樹的根節點
         # 在python中, 對get請求返回的r.content做fromstring()處理, 可以方便進行後續的xpath()定位等
         tree = html.fromstring(r.content)
+        img_url = tree.xpath('//meta[@name="twitter:image:src"]/@content')[0]
         title = tree.xpath('//a[@itemprop="url"]/text()')[0]
         circle = tree.xpath(
             '//span[@itemprop="brand" and @class="maker_name"]/*/text()')[0]
@@ -175,12 +177,12 @@ def match_code(work_code):
         if len(release_date) >= 11:
             release_date = release_date[2]+release_date[3]+release_date[5]+release_date[6]+release_date[8]+release_date[9]
 
-        return 200, title, circle, cvList, authorList, work_age[0], release_date
+        return 200, img_url, title, circle, cvList, authorList, work_age[0], release_date
 
     except os.error as err:
         text.insert(tk.END, "**請求超時!\n")
         text.insert(tk.END, "  請檢查網絡連接\n")
-        return "", "", "", [], [], "", ""
+        return "", "", "", "", [], [], "", ""
 
 def nameChange():
     # askdirectory()檔案對話框, 選擇目錄, 返回目錄名
@@ -188,7 +190,8 @@ def nameChange():
     if path == "":
         messagebox.showinfo(title="錯誤", message="請選擇路徑!" + "\n")
     else:
-        cbtn.config(state=tk.DISABLED)
+        cbtn_deltext.config(state=tk.DISABLED)
+        cbtn_dlcover.config(state=tk.DISABLED)
         btn.config(state=tk.DISABLED)
         btn['text'] = "等待完成"
         text.insert(tk.END, "選擇路徑: " + path + "\n")
@@ -210,10 +213,10 @@ def nameChange():
                 else:
                     #print('Processing: ' + code)
                     text.insert(tk.END, 'Processing: ' + code + '\n')
-                    r_status, title, circle, cvList, authorList, work_age, release_date = match_code(code)
+                    r_status, img_url, title, circle, cvList, authorList, work_age, release_date = match_code(code)
                     # 如果順利爬取網頁訊息
                     if r_status == 200 and title and circle:
-                        if var1.get():
+                        if deltext.get():
                             # 刪除title中的【.*?】
                             title = re.sub(u"\\【.*?】", "", title)
 
@@ -244,6 +247,19 @@ def nameChange():
                             new_name = new_name.replace("cv", cv[1:])
                         else:
                             new_name = new_name.replace("(CV. cv)", "")
+                            
+
+                        # 要下載封面且是資料夾
+                        if dlcover.get() and img_url and os.path.isdir(os.path.join(path, file)):
+                            try: # 嘗試下載封面
+                                store_path = os.path.join(path, file, "cover.jpg")
+                                if not os.path.isfile(store_path):
+                                    text.insert(tk.END, "  下載封面...\n")
+                                    urllib.request.urlretrieve(img_url, store_path)
+                                else:
+                                    text.insert(tk.END, "**封面已存在，跳過下載!\n")
+                            except os.error as err:
+                                text.insert(tk.END, "**下載封面過程中出現錯誤!\n")
 
                         # 將Windows文件名中的非法字元替換
                         # re.sub(pattern, repl, string)
@@ -278,7 +294,8 @@ def nameChange():
         text.insert(tk.END, "*******完成!*******\n\n\n\n")
         tk.messagebox.showinfo(title="提示", message="完成!")
 
-        cbtn.config(state=tk.NORMAL)
+        cbtn_deltext.config(state=tk.NORMAL)
+        cbtn_dlcover.config(state=tk.NORMAL)
         btn.config(state=tk.NORMAL)
         btn['text'] = "選擇路徑"
 
@@ -296,9 +313,9 @@ def thread_it(func, *args):
 
 
 root = tk.Tk()  # 實例化object，建立視窗root
-root.title('DLsite重命名工具 v2.0')  # 給視窗的標題取名字
+root.title('DLsite重命名工具 v3.0')  # 給視窗的標題取名字
 root.eval('tk::PlaceWindow . center')
-root.geometry('300x375')  # 設定視窗的大小(橫向 * 縱向)
+root.geometry('350x450')  # 設定視窗的大小(橫向 * 縱向)
 
 text = tk.Text(root)
 text.pack()
@@ -359,13 +376,17 @@ except os.error as err:
         text.insert(tk.END, "**使用默認命名模板:\n")
         text.insert(tk.END, "  workno title \n")
 
-var1 = tk.IntVar()  # 定義var1整型變數用來存放選擇行為返回值
-cbtn = tk.Checkbutton(root, text='去除title中【】之間的內容', variable=var1,
+deltext = tk.IntVar()  # 定義整數變數用來存放選擇行為返回值
+dlcover = tk.IntVar()
+cbtn_deltext = tk.Checkbutton(root, text='去除title中【】之間的內容', variable=deltext,
                       onvalue=1, offvalue=0)  # 傳值原理類似於radiobutton物件
+cbtn_dlcover = tk.Checkbutton(root, text='下載封面', variable=dlcover,
+                      onvalue=1, offvalue=0)                 
 
 btn = tk.Button(root, text='選擇路徑', command=lambda: thread_it(nameChange))
 
 btn.pack()
-cbtn.pack()
+cbtn_deltext.pack()
+cbtn_dlcover.pack()
 
 root.mainloop()

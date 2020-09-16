@@ -11,6 +11,7 @@ import json
 import random
 import sys
 import argparse
+import urllib.request
 
 # 默認設定
 template_RJ = 'workno title '  # 默認RJ命名模板(Voice)
@@ -150,15 +151,16 @@ def match_code(work_code):
                     url = VJ_G_WEBPATH + work_code
                 r = s.get(url, allow_redirects=False, cookies=R_COOKIE)
                 if r.status_code != 200:
-                    return r.status_code, "", "", [], [], "", ""
+                    return r.status_code, "", "", "", [], [], "", ""
             except os.error as err:
                 print("**請求超時!\n")
                 print("  請檢查網絡連接\n")
-                return "", "", "", [], [], "", ""
+                return "", "", "", "", [], [], "", ""
 
         # fromstring()在解析xml格式時, 將字串轉換為Element對像, 解析樹的根節點
         # 在python中, 對get請求返回的r.content做fromstring()處理, 可以方便進行後續的xpath()定位等
         tree = html.fromstring(r.content)
+        img_url = tree.xpath('//meta[@name="twitter:image:src"]/@content')[0]
         title = tree.xpath('//a[@itemprop="url"]/text()')[0]
         circle = tree.xpath(
             '//span[@itemprop="brand" and @class="maker_name"]/*/text()')[0]
@@ -177,14 +179,14 @@ def match_code(work_code):
         if len(release_date) >= 11:
             release_date = release_date[2]+release_date[3]+release_date[5]+release_date[6]+release_date[8]+release_date[9]
 
-        return 200, title, circle, cvList, authorList, work_age[0], release_date
+        return 200, img_url, title, circle, cvList, authorList, work_age[0], release_date
             
     except os.error as err:
         print("**請求超時!\n")
         print("  請檢查網絡連接\n")
-        return "", "", "", [], [], "", ""
+        return "", "", "", "", [], [], "", ""
 
-def nameChange(path, del_flag):
+def nameChange(path, del_flag, cover_flag):
         print("選擇路徑: " + path + "\n")
         # os.listdir()返回指定的資料夾包含的檔案或資料夾的名字的列表
         files = os.listdir(path)
@@ -204,7 +206,7 @@ def nameChange(path, del_flag):
                 else:
                     #print('Processing: ' + code)
                     print('Processing: ' + code + '\n')
-                    r_status, title, circle, cvList, authorList, work_age, release_date = match_code(code)
+                    r_status, img_url, title, circle, cvList, authorList, work_age, release_date = match_code(code)
                     # 如果順利爬取網頁訊息
                     if r_status == 200 and title and circle:
                         if del_flag:
@@ -238,6 +240,19 @@ def nameChange(path, del_flag):
                             new_name = new_name.replace("cv", cv[1:])
                         else:
                             new_name = new_name.replace("(CV. cv)", "")
+
+
+                        # 要下載封面且是資料夾
+                        if cover_flag and img_url and os.path.isdir(os.path.join(path, file)):
+                            try: # 嘗試下載封面
+                                store_path = os.path.join(path, file, "cover.jpg")
+                                if not os.path.isfile(store_path):
+                                    print("  下載封面...\n")
+                                    urllib.request.urlretrieve(img_url, store_path)
+                                else:
+                                    print("**封面已存在，跳過下載!\n")
+                            except os.error as err:
+                                print("**下載封面過程中出現錯誤!\n")
 
                         # 將Windows文件名中的非法字元替換
                         # re.sub(pattern, repl, string)
@@ -277,8 +292,9 @@ def dir_path(path):
         raise argparse.ArgumentTypeError(f"\"{path}\" is not a valid path!")
         
 def process_command():        
-    parser = argparse.ArgumentParser(description="Renamer for DLsite works")
+    parser = argparse.ArgumentParser(description="Renamer for DLsite works v3.0")
     parser.add_argument('-d', "--DEL", action='store_true', help='delete string in 【】')
+    parser.add_argument('-c', "--COVER", action='store_true', help='download cover')
     parser.add_argument('-i', "--PATH", type=dir_path, required=True, help='path for processing')
     return parser.parse_args()
 
@@ -341,4 +357,4 @@ except os.error as err:
         print("**使用默認命名模板:\n")
         print("  workno title \n")
 
-nameChange(args.PATH,args.DEL)
+nameChange(args.PATH,args.DEL,args.COVER)
