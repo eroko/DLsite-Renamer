@@ -167,14 +167,15 @@ def match_code(work_code):
         authorList = tree.xpath(
             '//*[@id="work_maker"]/tr/th[contains(text(), "著者")]/../td/a/text()')
         work_age = tree.xpath(
-            '//span[@class="icon_ADL"]/text()')
+            '//*[@id="work_outline"]/tr/th[contains(text(), "年齢指定")]/../td/div/a/span/text()')
         if not work_age:
             work_age = tree.xpath(
                 '//span[@class="icon_GEN"]/text()')
         release_date = tree.xpath(
             '//*[@id="work_outline"]/tr/th[contains(text(), "販売日")]/../td/a/text()')[0]
         # 精簡日期: 20ab年cd月ef日 => abcdef
-        release_date = release_date[2]+release_date[3]+release_date[5]+release_date[6]+release_date[8]+release_date[9]
+        if len(release_date) >= 11:
+            release_date = release_date[2]+release_date[3]+release_date[5]+release_date[6]+release_date[8]+release_date[9]
 
         return 200, title, circle, cvList, authorList, work_age[0], release_date
 
