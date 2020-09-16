@@ -150,11 +150,11 @@ def match_code(work_code):
                     url = VJ_G_WEBPATH + work_code
                 r = s.get(url, allow_redirects=False, cookies=R_COOKIE)
                 if r.status_code != 200:
-                    return r.status_code, "", "", []
+                    return r.status_code, "", "", [], [], "", ""
             except os.error as err:
                 print("**請求超時!\n")
                 print("  請檢查網絡連接\n")
-                return "", "", "", []
+                return "", "", "", [], [], "", ""
 
         # fromstring()在解析xml格式時, 將字串轉換為Element對像, 解析樹的根節點
         # 在python中, 對get請求返回的r.content做fromstring()處理, 可以方便進行後續的xpath()定位等
@@ -178,11 +178,11 @@ def match_code(work_code):
             release_date = release_date[2]+release_date[3]+release_date[5]+release_date[6]+release_date[8]+release_date[9]
 
         return 200, title, circle, cvList, authorList, work_age[0], release_date
-
+            
     except os.error as err:
         print("**請求超時!\n")
         print("  請檢查網絡連接\n")
-        return "", "", "", []
+        return "", "", "", [], [], "", ""
 
 def nameChange(path, del_flag):
         print("選擇路徑: " + path + "\n")
