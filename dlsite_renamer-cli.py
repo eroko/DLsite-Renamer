@@ -99,46 +99,6 @@ def strB2Q(s):
         rstring += chr(u_code)
     return rstring
 
-def find_all(source, dest):
-    length1, length2 = len(source), len(dest)
-    dest_list = []
-    temp_list = []
-    if length1 < length2:
-        return -1
-    i = 0
-    while i <= length1-length2:
-        if source[i] == dest[0]:
-            dest_list.append(i)
-        i += 1
-    if dest_list == []:
-        return -1
-    for x in dest_list:
-        #print("Now x is:%d. Slice string is :%s"% (x,repr(source[x:x+length2])),end=" ")
-        if source[x:x+length2] != dest:
-            #print(" dest != slice")
-            temp_list.append(x)
-        # else:
-            #print(" dest == slice")
-    for x in temp_list:
-        dest_list.remove(x)
-    return dest_list
-
-# 從資料夾名稱中提取code
-
-
-def get_code(originalName, matchCode):
-    index_list = find_all(originalName, matchCode)
-    if index_list == -1:
-        return ""
-    for i in range(0, len(index_list)):
-        r_idx = index_list[i]
-        code = originalName[r_idx:(r_idx)+8]
-        pattern = re.compile("^"+matchCode+"\d{6}$")
-        if pattern.match(code):
-            return code.upper()
-    return ""
-
-
 def match_code(code):
     # requests函示庫是一個常用於http請求的模組
     if code[0] == "R":
