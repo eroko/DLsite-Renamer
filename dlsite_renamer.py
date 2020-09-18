@@ -27,8 +27,8 @@ VJ_G_WEBPATH = 'https://www.dlsite.com/soft/work/=/product_id/'
 R_COOKIE = {'adultchecked': '1'}
 
 # re.compile()返回一個匹配對像
-# ensure path name is exactly RJ###### or RT######
-pattern = re.compile("[BbRrVv][EeJj]\d{6}")
+# ensure path name is exactly RJ\d\d\d\d\d\d or BJ\d\d\d\d\d\d or VJ\d\d\d\d\d\d
+pattern = re.compile("[BbRrVv][EeJj]\d{6}|$")
 # filter to substitute illegal filenanme characters to " "
 filter = re.compile('[\\\/:"*?<>|]+')
 
@@ -97,54 +97,14 @@ def strB2Q(s):
         rstring += chr(u_code)
     return rstring
 
-def find_all(source, dest):
-    length1, length2 = len(source), len(dest)
-    dest_list = []
-    temp_list = []
-    if length1 < length2:
-        return -1
-    i = 0
-    while i <= length1-length2:
-        if source[i] == dest[0]:
-            dest_list.append(i)
-        i += 1
-    if dest_list == []:
-        return -1
-    for x in dest_list:
-        #print("Now x is:%d. Slice string is :%s"% (x,repr(source[x:x+length2])),end=" ")
-        if source[x:x+length2] != dest:
-            #print(" dest != slice")
-            temp_list.append(x)
-        # else:
-            #print(" dest == slice")
-    for x in temp_list:
-        dest_list.remove(x)
-    return dest_list
-
-# 從資料夾名稱中提取code
-
-
-def get_code(originalName, matchCode):
-    index_list = find_all(originalName, matchCode)
-    if index_list == -1:
-        return ""
-    for i in range(0, len(index_list)):
-        r_idx = index_list[i]
-        code = originalName[r_idx:(r_idx)+8]
-        pattern = re.compile("^"+matchCode+"\d{6}$")
-        if pattern.match(code):
-            return code.upper()
-    return ""
-
-
-def match_code(work_code):
+def match_code(code):
     # requests函示庫是一個常用於http請求的模組
-    if work_code[0] == "R" or work_code[0] == "r":
-        url = RJ_WEBPATH + work_code
-    if work_code[0] == "B" or work_code[0] == "b":
-        url = BJ_WEBPATH + work_code
-    if work_code[0] == "V" or work_code[0] == "v":
-        url = VJ_WEBPATH + work_code
+    if code[0] == "R":
+        url = RJ_WEBPATH + code
+    if code[0] == "B":
+        url = BJ_WEBPATH + code
+    if code[0] == "V":
+        url = VJ_WEBPATH + code
     try:
         # allow_redirects=False 禁止重定向
         r = s.get(url, allow_redirects=False, cookies=R_COOKIE, headers=headers)
@@ -153,12 +113,12 @@ def match_code(work_code):
             #print("    Status code:", r.status_code, "\nurl:", url)
             try:
                 ## 改成一般向網址
-                if work_code[0] == "R" or work_code[0] == "r":
-                    url = RJ_G_WEBPATH + work_code
-                if work_code[0] == "B" or work_code[0] == "b":
-                    url = BJ_G_WEBPATH + work_code
-                if work_code[0] == "V" or work_code[0] == "v":
-                    url = VJ_G_WEBPATH + work_code
+                if code[0] == "R":
+                    url = RJ_G_WEBPATH + code
+                if code[0] == "B":
+                    url = BJ_G_WEBPATH + code
+                if code[0] == "V":
+                    url = VJ_G_WEBPATH + code
                 r = s.get(url, allow_redirects=False, cookies=R_COOKIE)
                 if r.status_code != 200:
                     return r.status_code, "", "", "", [], [], "", "", ""
@@ -217,18 +177,11 @@ def nameChange():
         # os.listdir()返回指定的資料夾包含的檔案或資料夾的名字的列表
         files = os.listdir(path)
         for file in files:
-                # 獲取資料夾原始名稱
-                filename, file_extension = os.path.splitext(file)
-                originalName = file.upper()
                 # 嘗試獲取code
-                code = ""
-                for matchCode in ['RJ', 'BJ', 'VJ', 'RE']:
-                    code = get_code(originalName, matchCode)
-                    if code:
-                        break
+                code = re.findall(pattern, file.upper())[0]
                 # 如果沒能提取到code
-                if code == "":
-                    continue  # 跳過該資料夾
+                if not code:
+                    continue  # 跳過該資料夾/檔案
                 else:
                     #print('Processing: ' + code)
                     text.insert(tk.END, 'Processing: ' + code + '\n')
@@ -239,11 +192,11 @@ def nameChange():
                             # 刪除title中的【.*?】
                             title = re.sub(u"\\【.*?】", "", title)
 
-                        if code[0] == "R" or code[0] == "r":
+                        if code[0] == "R":
                             new_name = template_RJ.replace("workno", code)
-                        if code[0] == "B" or code[0] == "b":
+                        if code[0] == "B":
                             new_name = template_BJ.replace("workno", code)
-                        if code[0] == "V" or code[0] == "v":
+                        if code[0] == "V":
                             new_name = template_VJ.replace("workno", code)
 
                         new_name = new_name.replace("title", title)
@@ -301,6 +254,7 @@ def nameChange():
                         try:
                             # strip() 去掉字串兩邊的空格
                             if os.path.isfile(os.path.join(path, file)):  # 如果是檔案
+                                temp, file_extension = os.path.splitext(file)
                                 os.rename(os.path.join(path, file),
                                         os.path.join(path, new_name.strip()+file_extension))
                             else:  # 如果是資料夾
