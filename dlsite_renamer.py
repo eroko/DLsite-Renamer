@@ -85,6 +85,18 @@ headers = {
  'user-agent': USER_AGENT
 }
 
+# 把字串半形轉全形
+def strB2Q(s):
+    rstring = ""
+    for uchar in s:
+        u_code = ord(uchar)
+        if u_code == 32:  # 全形空格直接轉換
+            u_code = 12288
+        elif 33 <= u_code <= 126:  # 全形字元（除空格）根據關係轉化
+            u_code += 65248
+        rstring += chr(u_code)
+    return rstring
+
 def find_all(source, dest):
     length1, length2 = len(source), len(dest)
     dest_list = []
@@ -269,9 +281,22 @@ def nameChange():
                             except os.error as err:
                                 text.insert(tk.END, "**下載封面過程中出現錯誤!\n")
 
-                        # 將Windows文件名中的非法字元替換
+                        # 1. 將Windows文件名中的非法字元替換成空白
                         # re.sub(pattern, repl, string)
-                        new_name = re.sub(filter, " ", new_name)
+                        # new_name = re.sub(filter, " ", new_name)
+                          
+                        # 1. 將Windows文件名中的非法字元替換成全形
+                        # re.match(pattern, string, flags=0)
+                        fixed_filenmae = "";
+                        for char in new_name:
+                            if re.match(filter, char):
+                                fixed_filenmae += strB2Q(char)
+                            else:
+                                fixed_filenmae += char
+                                
+                        # 2. 多空格轉單空格
+                        new_name = ' '.join(fixed_filenmae.split())
+
                         # 嘗試重命名
                         try:
                             # strip() 去掉字串兩邊的空格
@@ -321,7 +346,7 @@ def thread_it(func, *args):
 
 
 root = tk.Tk()  # 實例化object，建立視窗root
-root.title('DLsite重命名工具 v3.0')  # 給視窗的標題取名字
+root.title('DLsite重命名工具 v3.2')  # 給視窗的標題取名字
 root.eval('tk::PlaceWindow . center')
 root.geometry('350x450')  # 設定視窗的大小(橫向 * 縱向)
 
