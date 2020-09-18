@@ -82,6 +82,7 @@ VJ開頭 => 遊戲 作品
 ![Notepad3](https://i.imgur.com/L73BXEZ.png)
 2. 去除標題中【】之間的內容主要用於去掉不必要的標註，可多加利用~
 3. 若封面(cover.jpg)已存在資料夾中，則會自動跳過下載
+4. 標題字串特殊處理: 轉換標題中的"Windows非法字元"為"全形"，"多空格"變為"單空格"
 
 ### (Optional) CLI version without GUI and loop：
 ```
