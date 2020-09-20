@@ -1,6 +1,7 @@
 from tkinter import filedialog
 from tkinter import messagebox
 from lxml import html
+from glob import glob
 import tkinter as tk
 import threading
 import requests
@@ -30,7 +31,7 @@ R_COOKIE = {'adultchecked': '1'}
 
 # re.compile()返回一個匹配對像
 # ensure path name is exactly RJ\d\d\d\d\d\d or BJ\d\d\d\d\d\d or VJ\d\d\d\d\d\d
-pattern = re.compile("[BbRrVv][EeJj]\d{6}|$")
+pattern = re.compile("[BRV][EJ]\d{6}|$")
 # filter to substitute illegal filenanme characters to " "
 filter = re.compile('[\\\/:"*?<>|]+')
 
@@ -165,11 +166,16 @@ def match_code(code):
         print("  請檢查網絡連接\n")
         return "", "", "", "", [], [], "", "", ""
 
-def nameChange(path, del_flag, cover_flag):
+def nameChange(path, del_flag, cover_flag, recur_flag):
         print("選擇路徑: " + path + "\n")
         # os.listdir()返回指定的資料夾包含的檔案或資料夾的名字的列表
-        files = os.listdir(path)
+        if recur_flag: # 遞迴檢索
+            files = [y for x in os.walk(path) for y in glob(os.path.join(x[0], '*'))]
+        else: # 根目錄檢索
+            files = os.listdir(path)
         for file in files:
+                if recur_flag: # 遞迴檢索需要修正路徑
+                    path = os.path.split(file)[0]
                 # 嘗試獲取code
                 code = re.findall(pattern, file.upper())[0]
                 # 如果沒能提取到code
@@ -233,15 +239,15 @@ def nameChange(path, del_flag, cover_flag):
                           
                         # 1. 將Windows文件名中的非法字元替換成全形
                         # re.match(pattern, string, flags=0)
-                        fixed_filenmae = "";
+                        fixed_filename = "";
                         for char in new_name:
                             if re.match(filter, char):
-                                fixed_filenmae += strB2Q(char)
+                                fixed_filename += strB2Q(char)
                             else:
-                                fixed_filenmae += char
+                                fixed_filename += char
                                 
                         # 2. 多空格轉單空格
-                        new_name = ' '.join(fixed_filenmae.split())
+                        new_name = ' '.join(fixed_filename.split())
                         
                         # 嘗試重命名
                         try:
@@ -279,9 +285,10 @@ def dir_path(path):
         raise argparse.ArgumentTypeError(f"\"{path}\" is not a valid path!")
         
 def process_command():        
-    parser = argparse.ArgumentParser(description="Renamer for DLsite works v3.2")
+    parser = argparse.ArgumentParser(description="Renamer for DLsite works v3.3")
     parser.add_argument('-d', "--DEL", action='store_true', help='delete string in 【】')
     parser.add_argument('-c', "--COVER", action='store_true', help='download cover')
+    parser.add_argument('-r', "--RECUR", action='store_true', help='recursively processing')
     parser.add_argument('-i', "--PATH", type=dir_path, required=True, help='path for processing')
     return parser.parse_args()
 
@@ -344,4 +351,4 @@ except os.error as err:
         print("**使用默認命名模板:\n")
         print("  workno title \n")
 
-nameChange(args.PATH,args.DEL,args.COVER)
+nameChange(args.PATH,args.DEL,args.COVER,args.RECUR)

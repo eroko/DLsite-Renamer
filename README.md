@@ -1,5 +1,5 @@
 # DLsite_Renamer
-![範例圖片](https://i.imgur.com/BSOwho9.png)
+![使用者介面](https://i.imgur.com/L3AMWfp.png)
 
 ### Purpose
 Rename the DLsite works and download the cover If required.
@@ -86,7 +86,7 @@ VJ開頭 => 遊戲 作品
 
 ### (Optional) CLI version without GUI and loop：
 ```
-usage: dlsite_renamer-cli.py [-h] [-d] [-c] -i PATH
+usage: dlsite_renamer-cli.py [-h] [-d] [-c] [-r] -i PATH
 
 Renamer for DLsite works v3.0
 
@@ -94,5 +94,6 @@ optional arguments:
   -h, --help            show this help message and exit
   -d, --DEL             delete string in 【】
   -c, --COVER           download cover
+  -r, --RECUR           recursively processing
   -i PATH, --PATH PATH  path for processing
 ```

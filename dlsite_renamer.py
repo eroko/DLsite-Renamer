@@ -1,6 +1,7 @@
 from tkinter import filedialog
 from tkinter import messagebox
 from lxml import html
+from glob import glob
 import tkinter as tk
 import threading
 import requests
@@ -28,7 +29,7 @@ R_COOKIE = {'adultchecked': '1'}
 
 # re.compile()返回一個匹配對像
 # ensure path name is exactly RJ\d\d\d\d\d\d or BJ\d\d\d\d\d\d or VJ\d\d\d\d\d\d
-pattern = re.compile("[BbRrVv][EeJj]\d{6}|$")
+pattern = re.compile("[BRV][EJ]\d{6}|$")
 # filter to substitute illegal filenanme characters to " "
 filter = re.compile('[\\\/:"*?<>|]+')
 
@@ -171,12 +172,18 @@ def nameChange():
     else:
         cbtn_deltext.config(state=tk.DISABLED)
         cbtn_dlcover.config(state=tk.DISABLED)
+        cbtn_recursive.config(state=tk.DISABLED)
         btn.config(state=tk.DISABLED)
         btn['text'] = "等待完成"
         text.insert(tk.END, "選擇路徑: " + path + "\n")
         # os.listdir()返回指定的資料夾包含的檔案或資料夾的名字的列表
-        files = os.listdir(path)
+        if recursive.get(): # 遞迴檢索
+            files = [y for x in os.walk(path) for y in glob(os.path.join(x[0], '*'))]
+        else: # 根目錄檢索
+            files = os.listdir(path)
         for file in files:
+                if recursive.get(): # 遞迴檢索需要修正路徑
+                    path = os.path.split(file)[0]
                 # 嘗試獲取code
                 code = re.findall(pattern, file.upper())[0]
                 # 如果沒能提取到code
@@ -240,15 +247,15 @@ def nameChange():
                           
                         # 1. 將Windows文件名中的非法字元替換成全形
                         # re.match(pattern, string, flags=0)
-                        fixed_filenmae = "";
+                        fixed_filename = "";
                         for char in new_name:
                             if re.match(filter, char):
-                                fixed_filenmae += strB2Q(char)
+                                fixed_filename += strB2Q(char)
                             else:
-                                fixed_filenmae += char
+                                fixed_filename += char
                                 
                         # 2. 多空格轉單空格
-                        new_name = ' '.join(fixed_filenmae.split())
+                        new_name = ' '.join(fixed_filename.split())
 
                         # 嘗試重命名
                         try:
@@ -283,6 +290,7 @@ def nameChange():
 
         cbtn_deltext.config(state=tk.NORMAL)
         cbtn_dlcover.config(state=tk.NORMAL)
+        cbtn_recursive.config(state=tk.NORMAL)
         btn.config(state=tk.NORMAL)
         btn['text'] = "選擇路徑"
 
@@ -300,7 +308,7 @@ def thread_it(func, *args):
 
 
 root = tk.Tk()  # 實例化object，建立視窗root
-root.title('DLsite重命名工具 v3.2')  # 給視窗的標題取名字
+root.title('DLsite重命名工具 v3.3')  # 給視窗的標題取名字
 root.eval('tk::PlaceWindow . center')
 root.geometry('350x450')  # 設定視窗的大小(橫向 * 縱向)
 
@@ -365,15 +373,19 @@ except os.error as err:
 
 deltext = tk.IntVar()  # 定義整數變數用來存放選擇行為返回值
 dlcover = tk.IntVar()
+recursive = tk.IntVar()
 cbtn_deltext = tk.Checkbutton(root, text='去除title中【】之間的內容', variable=deltext,
                       onvalue=1, offvalue=0)  # 傳值原理類似於radiobutton物件
 cbtn_dlcover = tk.Checkbutton(root, text='下載封面', variable=dlcover,
-                      onvalue=1, offvalue=0)                 
+                      onvalue=1, offvalue=0)
+cbtn_recursive = tk.Checkbutton(root, text='遞迴檢索', variable=recursive,
+                      onvalue=1, offvalue=0)                    
 
 btn = tk.Button(root, text='選擇路徑', command=lambda: thread_it(nameChange))
 
 btn.pack()
 cbtn_deltext.pack()
 cbtn_dlcover.pack()
+cbtn_recursive.pack()
 
 root.mainloop()
