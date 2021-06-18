@@ -1,8 +1,8 @@
 # DLsite_Renamer
-![使用者介面](https://i.imgur.com/L3AMWfp.png)
+![GUI](https://i.loli.net/2021/06/18/m3TdsWb26rpCSBE.png)
 
 ### Purpose
-Rename the DLsite works and download the cover If required.
+Rename the DLsite works with custom pattern and download the cover If required.
 
 ### How to use:
 1. Download the binary [release pack](https://github.com/ch010060/DLsite_Renamer/releases) and run .exe or run python script by yourself.
@@ -10,7 +10,7 @@ Rename the DLsite works and download the cover If required.
 	1. GUI ver. => dlsite_renamer.py(.exe)
 	2. CLI ver. => dlsite_renamer-cli.py(.exe)
 
-**Install requirements：**
+### Install requirements：
 1. Install python3
 2. Install pip
 ```
@@ -19,41 +19,41 @@ pip install tkintertable
 pip install requests
 ```
 
-**Keyword**："workno", "circle", "title", "cv", "author", "work_age", "release_date", "type", 模板中的這8個關鍵字將會被程式替換  
+### Custom pattern：
+We will replace the filename with this keywords.  
 
-*關鍵字分別代表:*
-1. workno: 作品編號
-2. circle: 社團/公司名
+*Keyword List:*
+1. workno: 作品番號
+2. circle: サークル/會社
 3. title: 標題
-4. cv: 聲優
-5. author: 作者
+4. cv: 声優
+5. author: 著者
 6. work_age: 年齡指定
-7. release_date: 發售日
+7. release_date: 販売日
 8. type: 作品形式
 
-**Default template**: "workno title "
+**Default template**: "workno title"
 
-例如： VJ009178 英雄伝説 零の軌跡
+E.g, VJ009178 英雄伝説 零の軌跡
 
-**User defined template**: 請修改 "config.json" 中對應的 "type" 來替換自訂規則 "to", 若無定義則使用默認模板
+**User defined template**: Please modify the "config.json" to custom your "type" and "to" replace rule, or use default template
 
-作品編號意義如下(僅供大略參考)     
+The work code prefix meaning  
+RJxxxxxx => ASMR/Music   
+BJxxxxxx => Dojin/Manga  
+VJxxxxxx => Game 
 
-RJ開頭 => 音聲/音樂 作品    
-BJ開頭 => 書 作品  
-VJ開頭 => 遊戲 作品     
-
-例如：
+E.g,
 ```
 "type": "vj"        
 "to": "(type)(work_age)[release_date][workno][circle] title "     
 ```
 
-重命名前：[不必要的前綴] VJ009178 零.軌跡 (要刪掉的後綴)
+Before：[prefix_12345] VJ009178 零.軌跡 (postfix-56789)
 
-重命名後：(ゲーム)(全年齢)[150417][VJ009178][Falcom] 英雄伝説 零の軌跡
-
-*config.json範例*
+After：(ゲーム)(全年齢)[150417][VJ009178][Falcom] 英雄伝説 零の軌跡  
+  
+*config.json example*
 ```json
 {
 	 "replace_rules":
@@ -78,11 +78,11 @@ VJ開頭 => 遊戲 作品
 ```
 
 ### Notice：
-1. config.json 文件使用 **UTF-8** 編碼, 請不要用 Windows 系統自帶的記事本進行編輯，推薦使用專業的**文件編輯器**，例如: [Notepad3](https://www.appinn.com/notepad3/), [Notepad++](https://notepad-plus-plus.org/), [vscode](https://code.visualstudio.com/)
+1. Please modify the config.json with **UTF-8**.
 ![Notepad3](https://i.imgur.com/L73BXEZ.png)
-2. 去除標題中【】之間的內容主要用於去掉不必要的標註，可多加利用~
-3. 若封面(cover.jpg)已存在資料夾中，則會自動跳過下載
-4. 標題字串特殊處理: 轉換標題中的"Windows非法字元"為"全形"，"多空格"變為"單空格"
+2. You can delete the unnecessary string in【】in filename if required.
+3. Skip download the cover.jpg if it does exist.
+4. Special character processing: Convert the "Windows invalid character" to fullwidth form, multilple space to single space.
 
 ### (Optional) CLI version without GUI and loop：
 ```
