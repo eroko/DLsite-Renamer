@@ -1,5 +1,6 @@
 # DLsite_Renamer
 ![GUI](https://i.loli.net/2021/06/18/m3TdsWb26rpCSBE.png)
+![DEMO](https://i.loli.net/2020/09/18/YRJWovIBuQ4twNS.gif)
 
 ### Purpose
 Rename the DLsite works with custom pattern and download the cover If required.
