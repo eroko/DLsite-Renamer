@@ -1,5 +1,5 @@
 # DLsite_Renamer
-![GUI](https://i.loli.net/2021/06/18/m3TdsWb26rpCSBE.png)
+![GUI](https://i.loli.net/2021/06/25/gLe2xUNQCoAF6yr.png)
 ![DEMO](https://i.loli.net/2020/09/18/YRJWovIBuQ4twNS.gif)
 
 ### Purpose
@@ -39,9 +39,9 @@ E.g, VJ009178 英雄伝説 零の軌跡
 
 **User defined template**: Please modify the "config.json" to custom your "type" and "to" replace rule, or use default template
 
-The work code prefix meaning  
+The work code prefix meaning:  
 RJxxxxxx => ASMR/Music   
-BJxxxxxx => Dojin/Manga  
+BJxxxxxx => Doujin/Comic  
 VJxxxxxx => Game 
 
 E.g,
