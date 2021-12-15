@@ -132,7 +132,7 @@ def match_code(code):
         # 在python中, 對get請求返回的r.content做fromstring()處理, 可以方便進行後續的xpath()定位等
         tree = html.fromstring(r.content)
         img_url = tree.xpath('//meta[@name="twitter:image:src"]/@content')[0]
-        title = tree.xpath('//a[@itemprop="url"]/text()')[0]
+        title = tree.xpath('//h1[@itemprop="name"]/text()')[0]
         circle = tree.xpath(
             '//span[@itemprop="brand" and @class="maker_name"]/*/text()')[0]
         cvList = tree.xpath(
@@ -308,7 +308,7 @@ def thread_it(func, *args):
 
 
 root = tk.Tk()  # 實例化object，建立視窗root
-root.title('DLsite重命名工具 v3.3')  # 給視窗的標題取名字
+root.title('DLsite重命名工具 v3.4')  # 給視窗的標題取名字
 root.eval('tk::PlaceWindow . center')
 root.geometry('350x450')  # 設定視窗的大小(橫向 * 縱向)
 

@@ -134,7 +134,7 @@ def match_code(code):
         # 在python中, 對get請求返回的r.content做fromstring()處理, 可以方便進行後續的xpath()定位等
         tree = html.fromstring(r.content)
         img_url = tree.xpath('//meta[@name="twitter:image:src"]/@content')[0]
-        title = tree.xpath('//a[@itemprop="url"]/text()')[0]
+        title = tree.xpath('//h1[@itemprop="name"]/text()')[0]
         circle = tree.xpath(
             '//span[@itemprop="brand" and @class="maker_name"]/*/text()')[0]
         cvList = tree.xpath(
@@ -285,7 +285,7 @@ def dir_path(path):
         raise argparse.ArgumentTypeError(f"\"{path}\" is not a valid path!")
         
 def process_command():        
-    parser = argparse.ArgumentParser(description="Renamer for DLsite works v3.3")
+    parser = argparse.ArgumentParser(description="Renamer for DLsite works v3.4")
     parser.add_argument('-d', "--DEL", action='store_true', help='delete string in 【】')
     parser.add_argument('-c', "--COVER", action='store_true', help='download cover')
     parser.add_argument('-r', "--RECUR", action='store_true', help='recursively processing')

@@ -1,3 +1,7 @@
+# Recent Update
+- ver3.4 Fix Getting Title Error
+- ver3.3 Fork From ch010060/DLsite_Renamer
+
 # DLsite_Renamer
 ![GUI](https://i.loli.net/2021/06/25/gLe2xUNQCoAF6yr.png)
 ![DEMO](https://i.loli.net/2020/09/18/YRJWovIBuQ4twNS.gif)
