@@ -1,10 +1,28 @@
+# DLsite Renamer
+自动重命名RJ/BJ/VJ编号的文件
+
+## 更新事项
+
+### ver3.5
+- 取消了GUI版，只保留命令行版。`dlsite.py`就是命令行版文件，使用方法参照下面的旧版说明
+- 配置文件按照个人偏好配置，具体配置方案参照旧版说明文件
+- 把`README.md`的图片迁移到了github
+- 换了`requests`库，在网络环境不佳的情况下能更稳定一点？
+- 所以现在要使用你还得加上`requests`库
+
+---
+
+# Information Below is **OUTDATED**!!!!!!!
+
+---
+
 # Recent Update
 - ver3.4 Fix Getting Title Error
 - ver3.3 Fork From ch010060/DLsite_Renamer
 
 # DLsite_Renamer
-![GUI](https://i.loli.net/2021/06/25/gLe2xUNQCoAF6yr.png)
-![DEMO](https://i.loli.net/2020/09/18/YRJWovIBuQ4twNS.gif)
+![GUI](https://github.com/eroko/DLsite_Renamer/blob/master/images/GUI.png)
+![DEMO](https://github.com/eroko/DLsite_Renamer/blob/master/images/demo.gif)
 
 ### Purpose
 Rename the DLsite works with custom pattern and download the cover If required.
@@ -84,7 +102,7 @@ After：(ゲーム)(全年齢)[150417][VJ009178][Falcom] 英雄伝説 零の軌�
 
 ### Notice：
 1. Please modify the config.json with **UTF-8**.
-![Notepad3](https://i.imgur.com/L73BXEZ.png)
+![Notepad3](https://github.com/eroko/DLsite_Renamer/blob/master/images/notepad.png)
 2. You can delete the unnecessary string in【】in filename if required.
 3. Skip download the cover.jpg if it does exist.
 4. Special character processing: Convert the "Windows invalid character" to fullwidth form, multilple space to single space.

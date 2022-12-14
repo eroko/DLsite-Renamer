@@ -134,6 +134,7 @@ def match_code(code):
         # 在python中, 對get請求返回的r.content做fromstring()處理, 可以方便進行後續的xpath()定位等
         tree = html.fromstring(r.content)
         img_url = tree.xpath('//meta[@name="twitter:image:src"]/@content')[0]
+        # print(r.content)
         title = tree.xpath('//h1[@itemprop="name"]/text()')[0]
         circle = tree.xpath(
             '//span[@itemprop="brand" and @class="maker_name"]/*/text()')[0]
@@ -227,11 +228,19 @@ def nameChange(path, del_flag, cover_flag, recur_flag):
                                 store_path = os.path.join(path, file, "cover.jpg")
                                 if not os.path.isfile(store_path):
                                     print("  下載封面...\n")
-                                    urllib.request.urlretrieve(img_url, store_path)
+                                    print(img_url)
+                                    req=requests.get(img_url)
+                                    with open(store_path,'wb') as f:
+                                        f.write(req.content)
+                                        f.close()
+
+
+                                    # urllib.request.urlretrieve(img_url, store_path)
                                 else:
                                     print("**封面已存在，跳過下載!\n")
                             except os.error as err:
                                 print("**下載封面過程中出現錯誤!\n")
+                                print(err)
 
                         # 1. 將Windows文件名中的非法字元替換成空白
                         # re.sub(pattern, repl, string)
@@ -285,7 +294,7 @@ def dir_path(path):
         raise argparse.ArgumentTypeError(f"\"{path}\" is not a valid path!")
         
 def process_command():        
-    parser = argparse.ArgumentParser(description="Renamer for DLsite works v3.4")
+    parser = argparse.ArgumentParser(description="Renamer for DLsite works v3.3")
     parser.add_argument('-d', "--DEL", action='store_true', help='delete string in 【】')
     parser.add_argument('-c', "--COVER", action='store_true', help='download cover')
     parser.add_argument('-r', "--RECUR", action='store_true', help='recursively processing')
