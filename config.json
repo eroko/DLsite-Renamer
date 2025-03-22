@@ -4,7 +4,7 @@
 		{
             "type": "rj",
 			"from": "",
-			"to": "[workno] (type) [circle(author)] title (CV. cv)"
+			"to": "[workno] (type) [circle] title (CV. cv) "
 		},
 		{
             "type": "bj",

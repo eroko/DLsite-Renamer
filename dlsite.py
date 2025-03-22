@@ -109,21 +109,28 @@ def match_code(code):
         # HTTP狀態碼==200表示請求成功
         if r.status_code != 200:
             # print("    Status code:", r.status_code, "\nurl:", url)
-            try:
-                ## 改成一般向網址
-                if code[0] == "R":
-                    url = RJ_G_WEBPATH + code
-                if code[0] == "B":
-                    url = BJ_G_WEBPATH + code
-                if code[0] == "V":
-                    url = VJ_G_WEBPATH + code
-                r = s.get(url, allow_redirects=False, cookies=R_COOKIE)
-                if r.status_code != 200:
-                    return r.status_code, "", "", "", [], [], "", "", ""
-            except os.error as err:
-                print("**請求超時!\n")
-                print("  請檢查網絡連接\n")
-                return "", "", "", "", [], [], "", "", ""
+            # 额外处理301重定向
+            if r.status_code == 301:
+                url = r.headers['Location']
+                r = s.get(url, allow_redirects=False, cookies=R_COOKIE, headers=headers)
+
+            else:
+                try:
+                    ## 改成一般向網址
+                    if code[0] == "R":
+                        url = RJ_G_WEBPATH + code
+                    if code[0] == "B":
+                        url = BJ_G_WEBPATH + code
+                    if code[0] == "V":
+                        url = VJ_G_WEBPATH + code
+                    r = s.get(url, allow_redirects=False, cookies=R_COOKIE)
+                    if r.status_code != 200:
+                        return r.status_code, "", "", "", [], [], "", "", ""
+                except os.error as err:
+                    print("**請求超時!\n")
+                    print("  請檢查網絡連接\n")
+                    return "", "", "", "", [], [], "", "", ""
+
 
         # fromstring()在解析xml格式時, 將字串轉換為Element對像, 解析樹的根節點
         # 在python中, 對get請求返回的r.content做fromstring()處理, 可以方便進行後續的xpath()定位等
@@ -142,8 +149,12 @@ def match_code(code):
         # 精簡遊戲類型
         game_type_list = ["アクション", "クイズ", "アドベンチャー", "ロールプレイング", "テーブル", "デジタルノベル", "シミュレーション", "タイピング", "シューティング",
                           "パズル", "その他ゲーム"]
+
         if type in game_type_list:
             type = "ゲーム"
+        if url.split("/")[3] == "appx":
+            type = "スマホゲーム"
+        
 
         work_age = tree.xpath(
             '//*[@id="work_outline"]/tr/th[contains(text(), "年齢指定")]/../td/div/a/span/text()')
